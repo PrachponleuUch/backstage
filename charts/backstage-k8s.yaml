@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backstage
+  labels:
+    app: backstage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backstage
+  template:
+    metadata:
+      labels:
+        app: backstage
+    spec:
+      containers:
+      - name: backstage
+        image: prachponleuuch/backstage:v1
+        ports:
+        - containerPort: 7007
+        env:
+          - name: APP_CONFIG_app_baseUrl
+            value: https://backstage.alex.com
+          - name: APP_CONFIG_backend_baseUrl
+            value: https://backstage.alex.com
+          - name: POSTGRES_HOST
+            value: psql-postgresql # This should match the PostgreSQL service name ("kubectl get svc -n backstage" to find it)
+          - name: POSTGRES_USER
+            value: backstage
+          - name: POSTGRES_PASSWORD
+            value: 
+          - name: GITHUB_TOKEN
+            value: 
+          - name: AUTH_GITHUB_CLIENT_ID
+            value: 
+          - name: AUTH_GITHUB_CLIENT_SECRET
+            value: 
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backstage
+spec:
+  selector:
+    app: backstage
+  ports:
+    - protocol: TCP
+      port: 7007
+      targetPort: 7007
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backstage
+spec:
+  rules:
+  - host: "backstage.alex.com"
+    http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: backstage
+              port:
+                number: 7007
