@@ -1,8 +1,8 @@
 # [Backstage](https://backstage.io)
 
-This is your newly scaffolded Backstage App, Good Luck!
+This is a Scaffolded Backstage App!
 
-To start the app, run:
+To start the app, run these commands:
 
 ```sh
 yarn install
